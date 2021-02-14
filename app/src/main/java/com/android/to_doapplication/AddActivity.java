@@ -38,6 +38,8 @@ public class AddActivity extends AppCompatActivity {
     ImageButton imageButton, imageButton2;
     LinearLayout linearLayout;
     String color = "#FFFFFFFF";
+    String string;
+    EditText titleEdittext, notesEdittext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +48,8 @@ public class AddActivity extends AppCompatActivity {
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
                 | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
         getWindow().setNavigationBarColor(getResources().getColor(R.color.white));
+        titleEdittext = findViewById(R.id.title);
+        notesEdittext = findViewById(R.id.note);
         constraintLayout = findViewById(R.id.constraint);
         linearLayout = findViewById(R.id.linearLayout);
         cardView = findViewById(R.id.yellowcardView);
@@ -59,6 +63,14 @@ public class AddActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
+        try {
+            string = getIntent().getStringExtra("string");
+            if (string.equals("cardView")) {
+                titleEdittext.setText(getIntent().getStringExtra("title"));
+                notesEdittext.setText(getIntent().getStringExtra("notes"));
+                constraintLayout.setBackgroundColor(Color.parseColor(getIntent().getStringExtra("color")));
+            }
+        }catch (NullPointerException e){e.printStackTrace();}
     }
 
     public void openColors(View view) {
@@ -97,6 +109,7 @@ public class AddActivity extends AppCompatActivity {
         EditText editText2 = findViewById(R.id.note);
         title = editText.getText().toString().trim();
         note = editText2.getText().toString().trim();
+
         addTODatabase(title, note, color);
     }
 
@@ -109,7 +122,13 @@ public class AddActivity extends AppCompatActivity {
         hashMap.put("title", title);
         hashMap.put("note", note);
         hashMap.put("color", color);
-        hashMap.put("date", formattedDate);
+        if(!string.equals("cardView")){
+            hashMap.put("date", formattedDate);
+        }
+        else{
+            hashMap.put("date", getIntent().getStringExtra("date"));
+        }
+        hashMap.put("pin", false);
 
         databaseReference.child("User").
                 child(FirebaseAuth.getInstance().getCurrentUser().getUid())
@@ -117,7 +136,7 @@ public class AddActivity extends AppCompatActivity {
                 .updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                Toast.makeText(AddActivity.this, "Submited", Toast.LENGTH_SHORT).show();
+                Toast.makeText(AddActivity.this, "Submitted", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
                 finish();
