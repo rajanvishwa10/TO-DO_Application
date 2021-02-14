@@ -70,7 +70,9 @@ public class AddActivity extends AppCompatActivity {
                 notesEdittext.setText(getIntent().getStringExtra("notes"));
                 constraintLayout.setBackgroundColor(Color.parseColor(getIntent().getStringExtra("color")));
             }
-        }catch (NullPointerException e){e.printStackTrace();}
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
     }
 
     public void openColors(View view) {
@@ -122,25 +124,37 @@ public class AddActivity extends AppCompatActivity {
         hashMap.put("title", title);
         hashMap.put("note", note);
         hashMap.put("color", color);
-        if(!string.equals("cardView")){
+        if (!string.equals("cardView")) {
             hashMap.put("date", formattedDate);
-        }
-        else{
+        } else {
             hashMap.put("date", getIntent().getStringExtra("date"));
         }
         hashMap.put("pin", false);
 
-        databaseReference.child("User").
-                child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .child(formattedDate)
-                .updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Toast.makeText(AddActivity.this, "Submitted", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
+        if (!string.equals("cardView")) {
+            databaseReference.child("User").
+                    child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(formattedDate).updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Toast.makeText(AddActivity.this, "Submitted", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            });
+        } else {
+            databaseReference.child("User").
+                    child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(getIntent().getStringExtra("date")).updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Toast.makeText(AddActivity.this, "Submitted", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            });
+        }
+
+
     }
 }
