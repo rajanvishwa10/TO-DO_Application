@@ -116,6 +116,7 @@ public class AddActivity extends AppCompatActivity {
     }
 
     private void addTODatabase(String title, String note, String color) {
+        System.out.println(string);
         final Date c = Calendar.getInstance().getTime();
         SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
         final String formattedDate = df.format(c);
@@ -124,14 +125,44 @@ public class AddActivity extends AppCompatActivity {
         hashMap.put("title", title);
         hashMap.put("note", note);
         hashMap.put("color", color);
-        if (!string.equals("cardView")) {
+        try {
+            if (!string.isEmpty() && string != null && !string.equals("null")) {
+                hashMap.put("date", getIntent().getStringExtra("date"));
+            } else {
+                hashMap.put("date", formattedDate);
+            }
+        } catch (NullPointerException e) {
+            e.printStackTrace();
             hashMap.put("date", formattedDate);
-        } else {
-            hashMap.put("date", getIntent().getStringExtra("date"));
         }
         hashMap.put("pin", false);
 
-        if (!string.equals("cardView")) {
+        try {
+            if (!string.isEmpty() && string != null && !string.equals("null")) {
+                databaseReference.child("User").
+                        child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(getIntent().getStringExtra("date")).updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(AddActivity.this, "Submitted", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                });
+            } else {
+                databaseReference.child("User").
+                        child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(formattedDate).updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(AddActivity.this, "Submitted", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                });
+            }
+        } catch (NullPointerException e) {
+            e.printStackTrace();
             databaseReference.child("User").
                     child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(formattedDate).updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
@@ -142,19 +173,7 @@ public class AddActivity extends AppCompatActivity {
                     finish();
                 }
             });
-        } else {
-            databaseReference.child("User").
-                    child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(getIntent().getStringExtra("date")).updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void aVoid) {
-                    Toast.makeText(AddActivity.this, "Submitted", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                    startActivity(intent);
-                    finish();
-                }
-            });
         }
-
 
     }
 }

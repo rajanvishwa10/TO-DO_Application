@@ -6,13 +6,14 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
-
-import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -47,9 +48,19 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
                 intent.putExtra("notes", todo.getNote());
                 intent.putExtra("color", todo.getColor());
                 intent.putExtra("date", todo.getDate());
+                holder.imageView.setVisibility(View.INVISIBLE);
                 context.startActivity(intent);
             }
         });
+        holder.cardView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Toast.makeText(context, "Long Pressed!!!!!", Toast.LENGTH_SHORT).show();
+                holder.imageView.setVisibility(View.VISIBLE);
+                return true;
+            }
+        });
+        
     }
 
     @Override
@@ -60,12 +71,14 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
     public static class ViewHolder extends RecyclerView.ViewHolder {
         CardView cardView;
         TextView notes, title;
+        LinearLayout imageView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             notes = itemView.findViewById(R.id.notes);
             title = itemView.findViewById(R.id.title);
             cardView = itemView.findViewById(R.id.cardView);
+            imageView = itemView.findViewById(R.id.linearLayout);
         }
     }
 }
