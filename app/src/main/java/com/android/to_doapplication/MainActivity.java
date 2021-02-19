@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        todoList.clear();
                         for (DataSnapshot dataSnapshot : snapshot.getChildren()){
                             System.out.println(dataSnapshot.child("note").getValue(String.class));
                             TodoList todo = dataSnapshot.getValue(TodoList.class);

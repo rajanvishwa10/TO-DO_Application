@@ -15,6 +15,12 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
 import java.util.List;
 
 public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
@@ -49,14 +55,26 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
                 intent.putExtra("color", todo.getColor());
                 intent.putExtra("date", todo.getDate());
                 holder.imageView.setVisibility(View.INVISIBLE);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
             }
         });
         holder.cardView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                Toast.makeText(context, "Long Pressed!!!!!", Toast.LENGTH_SHORT).show();
-                holder.imageView.setVisibility(View.VISIBLE);
+                //Toast.makeText(context, "Long Pressed!!!!!", Toast.LENGTH_SHORT).show();
+                //holder.imageView.setVisibility(View.VISIBLE);
+                HashMap<String, Object> update = new HashMap<>();
+                update.put("pin", !todo.isPin());
+                DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+                database.child("User").
+                        child(FirebaseAuth.getInstance().getCurrentUser().getUid()).
+                        child(todo.getDate()).updateChildren(update).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(context, "Pinned!!!", Toast.LENGTH_SHORT).show();
+                    }
+                });
                 return true;
             }
         });

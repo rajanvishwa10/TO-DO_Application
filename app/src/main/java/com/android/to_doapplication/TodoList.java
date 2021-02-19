@@ -2,15 +2,25 @@ package com.android.to_doapplication;
 
 public class TodoList {
     String color, date, title, note;
+    boolean pin;
 
     public TodoList() {
     }
 
-    public TodoList(String color, String date, String title, String note) {
+    public TodoList(String color, String date, String title, String note, boolean pin) {
         this.color = color;
         this.date = date;
         this.title = title;
         this.note = note;
+        this.pin = pin;
+    }
+
+    public boolean isPin() {
+        return pin;
+    }
+
+    public void setPin(boolean pin) {
+        this.pin = pin;
     }
 
     public String getColor() {
